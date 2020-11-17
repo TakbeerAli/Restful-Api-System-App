@@ -54,6 +54,18 @@ app.post("/articles", function(req,res){
     
 });
 
+app.delete("/articles", function(req,res){  // Delete route to delet all records form DB
+wikiPost.deleteMany(function(err){
+if(!err){
+    console.log("Sucess Deleted")
+}
+else{
+    console.log(err)
+}
+});
+
+});
+
 
 
 app.listen(3000, function() {
