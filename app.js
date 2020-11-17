@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require('mongoose');
+const e = require("express");
 
 const app = express();
 
@@ -18,16 +19,40 @@ content:String
 
 const wikiPost = mongoose.model("article",wikiSchema);
 
-app.get("/",function(req,res){
+app.get("/articles",function(req,res){  // this route is for API sending data to client
 
-    const posts = new wikiPost ({
-        title: "Kohat",
-        content: "theadfkasdklfj;"
+  wikiPost.find(function(err, founditem){
+
+    if(!err){
+        res.send(founditem);
+    }
+    else{
+        res.send(err);
+    }
+  });
+});
+
+app.post("/articles", function(req,res){
+
+    const Title = req.body.title;
+    const Content = req.body.content;
+
+
+    const articl = new wikiPost({
+    title:Title,
+    content:Content
 
     });
-    posts.save();
-    console.log("saved");
-})
+    articl.save(function(err){
+        if(!err){
+            res.send("SuccesFully Saved")
+        }
+        else{
+            res.send(err);
+        }
+    })
+    
+});
 
 
 
