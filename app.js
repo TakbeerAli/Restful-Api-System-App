@@ -19,20 +19,24 @@ content:String
 
 const wikiPost = mongoose.model("article",wikiSchema);
 
-app.get("/articles",function(req,res){  // this route is for API sending data to client
+///////specific route for all Adress & request targeting all articles /////////
 
-  wikiPost.find(function(err, founditem){
+app.route("/articles")
 
-    if(!err){
-        res.send(founditem);
-    }
-    else{
-        res.send(err);
-    }
-  });
-});
+.get(function(req,res){  // this route is for API sending data to client
 
-app.post("/articles", function(req,res){
+    wikiPost.find(function(err, founditem){
+  
+      if(!err){
+          res.send(founditem);
+      }
+      else{
+          res.send(err);
+      }
+    });
+  })
+
+.post(function(req,res){
 
     const Title = req.body.title;
     const Content = req.body.content;
@@ -52,20 +56,37 @@ app.post("/articles", function(req,res){
         }
     })
     
-});
+})
 
-app.delete("/articles", function(req,res){  // Delete route to delet all records form DB
-wikiPost.deleteMany(function(err){
-if(!err){
-    console.log("Sucess Deleted")
-}
-else{
-    console.log(err)
-}
-});
+.delete(function(req,res){  // Delete route to delet all records form DB
+    wikiPost.deleteMany(function(err){
+    if(!err){
+        console.log("Sucess Deleted")
+    }
+    else{
+        console.log(err)
+    }
+    });
+    
+    });
+
+
+///// Request Targeting specific Article/////////////////
+
+app.route("/articles/:articleTitle")
+.get(function(req, res){
+
+    wikiPost.findOne({title:req.params.articleTitle}, function(err, foundArticle){
+     if(foundArticle)
+     {
+         res.send(foundArticle)
+     }else{
+         res.send("No Article found according to you matching you provide");
+     }
+    })
+
 
 });
-
 
 
 app.listen(3000, function() {
