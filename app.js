@@ -74,7 +74,7 @@ app.route("/articles")
 ///// Request Targeting specific Article/////////////////
 
 app.route("/articles/:articleTitle")
-.get(function(req, res){
+.get(function(req, res){  // Get specfic Data from DB 
 
     wikiPost.findOne({title:req.params.articleTitle}, function(err, foundArticle){
      if(foundArticle)
@@ -84,9 +84,48 @@ app.route("/articles/:articleTitle")
          res.send("No Article found according to you matching you provide");
      }
     })
+})
 
+.put(function(req, res){ // update hole records in DB without specific field
+
+    wikiPost.update(
+        {title:req.params.articleTitle},
+        {title:req.body.title, content: req.body.content},
+        {overwrite:true},
+        function(err){
+            if(!err){
+                res.send("Record Updated Succesfully");
+            }
+
+        }
+    );
+})
+
+.patch(function(req, res){ // Update only those records which needed to change only by PATCH
+    wikiPost.update(
+        {title:req.params.articleTitle},
+        {$set:req.body},
+        function(err){
+            if(!err){
+                res.send("succesfully updated")
+            }else{
+                res.send(err)
+            }
+        }
+    );
+})
+.delete(function(req, res){  // delet specific record from DB through ResfApi
+
+    wikiPost.deleteOne({title:req.params.articleTitle}, function(err){
+        if(!err){
+            res.send("Record Deleted Succesfully")
+        }else{
+            res.send(err)
+        }
+    })
 
 });
+
 
 
 app.listen(3000, function() {
